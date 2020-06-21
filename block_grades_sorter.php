@@ -23,41 +23,41 @@
  */
 
 class block_grades_sorter extends block_base {
-    
+
     public function init() {
         $this->title = get_string('grades_sorter', 'block_grades_sorter');
     }
-    
+
     public function get_content() {
         if ($this->content !== null) {
-          return $this->content;
+            return $this->content;
         }
-        
-        global $COURSE, $DB, $PAGE, $OUTPUT;
-     
-        $canmanage = $PAGE->user_is_editing($this->instance->id);
+
+        global $COURSE, $DB, $OUTPUT;
+
+        $canmanage = $this->page->user_is_editing($this->instance->id);
         $this->content = new stdClass;
 
-        if($canmanage) {
+        if ($canmanage) {
             $sortgrade = optional_param('sortgrade', 0, PARAM_ACTION);
             if ($sortgrade && confirm_sesskey()) {
                 $sections = $DB->get_records('course_sections', ['course' => $COURSE->id], 'section', 'id, section, sequence');
                 $mods = [];
                 foreach ($sections as $section) {
-                    if($section->sequence !== '') {
-                        $mods = array_merge($mods, explode(',',$section->sequence));
+                    if ($section->sequence !== '') {
+                        $mods = array_merge($mods, explode(',', $section->sequence));
                     }
                 }
                 $notmodindex = count($mods) + 1; // Grades that are not activity will be put in last.
                 $modules = $DB->get_records_menu('modules', [], '', 'id, name');
                 $gradeitems = $DB->get_records('grade_items', ['courseid' => $COURSE->id], 'sortorder', 'id, iteminstance, sortorder, itemtype, itemmodule');
-                foreach($gradeitems as $gradeitem) {
-                    if($gradeitem->itemtype === 'mod') {
-                        $mod_id = $DB->get_field('course_modules', 'id', [
+                foreach ($gradeitems as $gradeitem) {
+                    if ($gradeitem->itemtype === 'mod') {
+                        $modid = $DB->get_field('course_modules', 'id', [
                             'instance' => $gradeitem->iteminstance,
                             'module' => array_search($gradeitem->itemmodule, $modules)
                         ]);
-                        $sortorder = array_search($mod_id, $mods) + 1;
+                        $sortorder = array_search($modid, $mods) + 1;
                         $DB->set_field('grade_items', 'sortorder', $sortorder, ['id' => $gradeitem->id]);
                     } else {
                         $DB->set_field('grade_items', 'sortorder', $notmodindex, ['id' => $gradeitem->id]);
@@ -79,6 +79,6 @@ class block_grades_sorter extends block_base {
         return $this->content;
     }
     public function applicable_formats() {
-      return array('course-view' => true);
+        return array('course-view' => true);
     }
 }
