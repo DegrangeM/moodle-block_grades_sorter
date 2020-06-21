@@ -27,4 +27,4 @@ $string['grades_sorter'] = 'Grades Sorter';
 $string['grades_sorter:addinstance'] = 'Add a new grades sorter block';
 $string['sortgrades'] = 'Sort Grades';
 $string['sortgradessuccess'] = 'Grades successfully sorted.';
-$string['footer'] = 'Press this button to sort grades in the same order than activity.';
+$string['footer'] = 'Press this button to sort grades in the same order than activities.';
