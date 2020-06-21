@@ -22,8 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Grades Sorter';
-$string['grades_sorter'] = 'Grades Sorter';
+$string['pluginname'] = 'Grades sorter';
+$string['grades_sorter'] = 'Grades sorter';
 $string['grades_sorter:addinstance'] = 'Add a new grades sorter block';
 $string['sortgrades'] = 'Sort grades';
 $string['sortgradessuccess'] = 'Grades successfully sorted.';
