@@ -39,42 +39,48 @@ class block_grades_sorter extends block_base {
         $this->content = new stdClass;
 
         if ($canmanage) {
-            $sortgrade = optional_param('sortgrade', 0, PARAM_ACTION);
-            if ($sortgrade && confirm_sesskey()) {
-                $sections = $DB->get_records('course_sections', ['course' => $COURSE->id], 'section', 'id, section, sequence');
-                $mods = [];
-                foreach ($sections as $section) {
-                    if ($section->sequence !== '') {
-                        $mods = array_merge($mods, explode(',', $section->sequence));
-                    }
-                }
-                $notmodindex = count($mods) + 1; // Grades that are not activity will be put in last.
-                $modules = $DB->get_records_menu('modules', [], '', 'id, name');
-                $gradeitems = $DB->get_records('grade_items', ['courseid' => $COURSE->id], 'sortorder', 'id, iteminstance, sortorder, itemtype, itemmodule');
-                foreach ($gradeitems as $gradeitem) {
-                    if ($gradeitem->itemtype === 'mod') {
-                        $modid = $DB->get_field('course_modules', 'id', [
-                            'instance' => $gradeitem->iteminstance,
-                            'module' => array_search($gradeitem->itemmodule, $modules)
-                        ]);
-                        $sortorder = array_search($modid, $mods) + 1;
-                        $DB->set_field('grade_items', 'sortorder', $sortorder, ['id' => $gradeitem->id]);
-                    } else {
-                        $DB->set_field('grade_items', 'sortorder', $notmodindex, ['id' => $gradeitem->id]);
-                        $notmodindex++;
-                    }
-                }
-                $this->content->text = get_string('sortgradessuccess', 'block_grades_sorter');
-                $this->content->footer = '';
-            } else {
-                $output = $this->page->get_renderer('block_search_forums');
-                $searchform = new \block_grades_sorter\output\grades_sorter_form($this->page->course->id);
-                $this->content->text = $output->render($searchform);
-                $this->content->footer = get_string('footer', 'block_grades_sorter');
-            }
+			$context = context_course::instance($COURSE->id);
+			if (has_capability('moodle/grade:manage', $context)) {
+              $sortgrade = optional_param('sortgrade', 0, PARAM_ACTION);
+              if ($sortgrade && confirm_sesskey()) {
+                  $sections = $DB->get_records('course_sections', ['course' => $COURSE->id], 'section', 'id, section, sequence');
+                  $mods = [];
+                  foreach ($sections as $section) {
+                      if ($section->sequence !== '') {
+                          $mods = array_merge($mods, explode(',', $section->sequence));
+                      }
+                  }
+                  $notmodindex = count($mods) + 1; // Grades that are not activity will be put in last.
+                  $modules = $DB->get_records_menu('modules', [], '', 'id, name');
+                  $gradeitems = $DB->get_records('grade_items', ['courseid' => $COURSE->id], 'sortorder', 'id, iteminstance, sortorder, itemtype, itemmodule');
+                  foreach ($gradeitems as $gradeitem) {
+                      if ($gradeitem->itemtype === 'mod') {
+                          $modid = $DB->get_field('course_modules', 'id', [
+                              'instance' => $gradeitem->iteminstance,
+                              'module' => array_search($gradeitem->itemmodule, $modules)
+                          ]);
+                          $sortorder = array_search($modid, $mods) + 1;
+                          $DB->set_field('grade_items', 'sortorder', $sortorder, ['id' => $gradeitem->id]);
+                      } else {
+                          $DB->set_field('grade_items', 'sortorder', $notmodindex, ['id' => $gradeitem->id]);
+                          $notmodindex++;
+                      }
+                  }
+                  $this->content->text = get_string('sortgradessuccess', 'block_grades_sorter');
+                  $this->content->footer = '';
+              } else {
+                  $output = $this->page->get_renderer('block_search_forums');
+                  $searchform = new \block_grades_sorter\output\grades_sorter_form($this->page->course->id);
+                  $this->content->text = $output->render($searchform);
+                  $this->content->footer = get_string('footer', 'block_grades_sorter');
+              }
+			} else {
+			  $this->content->text = get_string('nopermission', 'block_grades_sorter');
+              $this->content->footer = '';
+			}
         } else {
-            $this->content->text   = '';
-            $this->content->footer   = '';
+            $this->content->text = '';
+            $this->content->footer = '';
         }
         return $this->content;
     }
