@@ -27,6 +27,7 @@ $string['grades_sorter'] = 'Grades sorter';
 $string['grades_sorter:addinstance'] = 'Add a new grades sorter block';
 $string['sortgrades'] = 'Sort grades';
 $string['sortgradessuccess'] = 'Grades successfully sorted.';
+$string['nopermission'] = 'You need permission de manage grades to sort grades.';
 $string['footer'] = 'Press this button to sort grades in the same order than activities.';
 $string['privacy:metadata'] = 'The grades sorter block only add a button to sort grades in the same order than activities.';
 
