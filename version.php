@@ -25,5 +25,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_grades_sorter';
-$plugin->version = 2020062120;
+$plugin->version = 2020071923;
 $plugin->requires = 2020061500;
